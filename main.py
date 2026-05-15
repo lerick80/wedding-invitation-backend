@@ -24,7 +24,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# DB
+# Dase de datos
 def get_db():
     db = SessionLocal()
     try:
