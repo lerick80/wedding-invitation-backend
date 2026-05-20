@@ -172,3 +172,19 @@ def export_excel(
     df.to_excel(file_path, index=False)
 
     return FileResponse(file_path, filename="invitados.xlsx")
+
+@app.delete("/admin/delete/{id}")
+def delete_guest(
+    id: int,
+    db: Session = Depends(get_db),
+    token: str = Depends(verify_admin)
+):
+    guest = db.query(Guest).filter(Guest.id == id).first()
+
+    if not guest:
+        raise HTTPException(status_code=404, detail="No encontrado")
+
+    db.delete(guest)
+    db.commit()
+
+    return {"message": "Eliminado"}
