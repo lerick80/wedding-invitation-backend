@@ -163,7 +163,8 @@ def export_excel(
             "Código": g.code,
             "Asignados": g.guests_allowed,
             "Confirmados": g.guests_confirmed,
-            "Invitados": g.guest_names
+            "Invitados": g.guest_names,
+            "Link": f"{FRONT}/?code={g.code}" #Agrega link
         })
 
     df = pd.DataFrame(data)
@@ -173,6 +174,7 @@ def export_excel(
 
     return FileResponse(file_path, filename="invitados.xlsx")
 
+# Eliminar invitado
 @app.delete("/admin/delete/{id}")
 def delete_guest(
     id: int,
@@ -188,3 +190,23 @@ def delete_guest(
     db.commit()
 
     return {"message": "Eliminado"}
+
+# Actualizar invitado
+@app.put("/admin/update/{id}")
+def update_guest(
+    id: int,
+    data: dict,
+    db: Session = Depends(get_db),
+    token: str = Depends(verify_admin)
+):
+    guest = db.query(Guest).filter(Guest.id == id).first()
+
+    if not guest:
+        raise HTTPException(status_code=404, detail="No encontrado")
+
+    guest.name = data.get("name", guest.name)
+    guest.guests_allowed = data.get("guests_allowed", guest.guests_allowed)
+
+    db.commit()
+
+    return {"message": "Actualizado "}
