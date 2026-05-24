@@ -153,6 +153,8 @@ def export_excel(
     token: str = Depends(verify_admin)
 ):
 
+    FRONT = "https://boda-javier-yareli.vercel.app"
+
     guests = db.query(Guest).all()
 
     data = []
@@ -164,7 +166,7 @@ def export_excel(
             "Asignados": g.guests_allowed,
             "Confirmados": g.guests_confirmed,
             "Invitados": g.guest_names,
-            "Link": f"{FRONT}/?code={g.code}" #Agrega link
+            "Link": f"{FRONT}/?code={g.code}"  
         })
 
     df = pd.DataFrame(data)
